@@ -35,10 +35,10 @@ fi
 
 echo
 echo "Installing dependencies..."
-apt-get update && apt-get install -qy build-essential git docker.io libssl-dev nodejs
+apt-get -qq update && apt-get -qq install build-essential git docker.io libssl-dev nodejs
 
 if [[ ! -e "${DOCKER_COMPOSE}" ]]; then
-  curl -L https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64 -o "${DOCKER_COMPOSE}"
+  curl -sSLo "${DOCKER_COMPOSE}" https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64
   chmod +x "${DOCKER_COMPOSE}"
 fi
 

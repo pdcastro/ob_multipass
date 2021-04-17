@@ -59,7 +59,7 @@ fi
 
 echo
 echo "Installing dependencies..."
-apt-get update && apt-get install -qy curl unzip docker.io
+apt-get -qq update && apt-get -qq install curl unzip docker.io
 
 echo
 if [ -z "${SUDO_USER}" ]; then
@@ -71,20 +71,20 @@ else
 fi
 
 echo
-echo "Installing the balena CLI to ${CLI_DIR}..."
-mkdir -p "${INSTALL_DIR}"
-cd "${INSTALL_DIR}"
+echo "Fetching latest CLI version..."
 
 CLI_VERSION=$(curl -sSL https://github.com/balena-io/balena-cli/releases/latest | sed -En 's/.*balena-cli-(v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})-linux-x64-standalone\.zip.*/\1/p' | head -1)
 CLI_ZIP_FILE="balena-cli-${CLI_VERSION}-linux-x64-standalone.zip"
+CLI_ZIP_PATH="/tmp/${CLI_ZIP_FILE}"
 
-echo
-echo "Downloading CLI version ${CLI_VERSION}..."
-
-if [ ! -e "${CLI_ZIP_FILE}" ]; then
-  curl -LO "https://github.com/balena-io/balena-cli/releases/download/${CLI_VERSION}/${CLI_ZIP_FILE}"
+if [ ! -e "${CLI_ZIP_PATH}" ]; then
+  echo "Downloading '${CLI_ZIP_PATH}'..."
+  curl -sSL -o "${CLI_ZIP_PATH}" "https://github.com/balena-io/balena-cli/releases/download/${CLI_VERSION}/${CLI_ZIP_FILE}"
 fi
-unzip -o "${CLI_ZIP_FILE}"
+
+echo "Installing balena CLI ${CLI_VERSION} to ${CLI_DIR}..."
+mkdir -p "${INSTALL_DIR}"
+unzip -qo "${CLI_ZIP_PATH}" -d "${INSTALL_DIR}"
 
 rm -f "${CLI_BIN_PATH}"
 cat >"${CLI_BIN_PATH}" <<EOF
